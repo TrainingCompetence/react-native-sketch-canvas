@@ -265,20 +265,28 @@ public class SketchCanvas extends View {
     }
 
     public void save(String format, String folder, String filename, boolean transparent, boolean includeImage, boolean includeText, boolean cropToImageSize) {
-        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + folder);
+        Log.i("SketchCanvas", "Check folder");
+        File f = new File(mContext.getFilesDir() + File.separator + folder);
         boolean success = f.exists() ? true : f.mkdirs();
         if (success) {
+            Log.i("SketchCanvas", "Folder exist or created");
             Bitmap bitmap = createImage(format.equals("png") && transparent, includeImage, includeText, cropToImageSize);
 
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
-                File.separator + folder + File.separator + filename + (format.equals("png") ? ".png" : ".jpg"));
+            Log.i("SketchCanvas", "Create file");
+            File file = new File(mContext.getFilesDir() + File.separator + folder + 
+                File.separator + "testfilename" + (format.equals("png") ? ".png" : ".jpg"));
+                Log.i("SketchCanvas", "Created");
             try {
+                Log.i("SketchCanvas", "start compressing");
                 bitmap.compress(
                     format.equals("png") ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
                     format.equals("png") ? 100 : 90,
                     new FileOutputStream(file));
+                Log.i("SketchCanvas", "compressed");
+                Log.i("SketchCanvas", "onSave");
                 this.onSaved(true, file.getPath());
             } catch (Exception e) {
+                Log.i("SketchCanvas", "Couldnt create ");
                 e.printStackTrace();
                 onSaved(false, null);
             }
